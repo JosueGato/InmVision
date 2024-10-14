@@ -37,10 +37,11 @@ class ClientResource extends Resource
                     TextInput::make('ci')
                     ->required()              
                     ->hint('Ingrese un número de carnet de identidad boliviano válido.')
+                    ->alphaNum()
                     ->unique(ignoreRecord: true)
                     ->label('Carnet de Identidad')
                     ->validationMessages([
-                        'unique' => 'Este carnet de identidad ya fue registrado. Registre uno nuevo.' 
+                        'unique' => 'Este carnet de identidad ya fue registrado. Registre uno nuevo.'
                     ])
                     ->maxLength(9)
                     ->extraAttributes([
@@ -50,6 +51,7 @@ class ClientResource extends Resource
                 
                     TextInput::make('client_cellphone_number')
                     ->required()
+                    ->alphaNum()
                     ->extraAttributes([
                         'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
                         'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
