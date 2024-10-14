@@ -13,10 +13,14 @@ class Schedule extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['hour','scheduletype_id', 'schedule_name', 'description', 'is_active'];
     
-
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'id');
+    }
+
+    public function reprogramedappointments()
+    {
+        return $this->hasMany(Reprogramedappointment::class, 'id');
     }
 
     public function scheduletypes()

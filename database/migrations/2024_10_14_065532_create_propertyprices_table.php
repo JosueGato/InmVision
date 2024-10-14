@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('propertyprices', function (Blueprint $table) {
             $table->increments('id')->unique('id_unique');
             $table->unsignedBigInteger('user_id')->index('fk_property_prices_users1_idx');
+            $table->string('propertyprice_code', 40)->nullable();
             $table->decimal('price_bs', 10)->nullable();
             $table->decimal('price_us', 10)->nullable();
             $table->date('registration_date')->nullable();
