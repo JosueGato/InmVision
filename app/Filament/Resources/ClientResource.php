@@ -35,39 +35,48 @@ class ClientResource extends Resource
                 ->schema([
                     
                     TextInput::make('ci')
-                    ->required()              
-                    ->hint('Ingrese un número de carnet de identidad boliviano válido.')
-                    ->alphaNum()
-                    ->unique(ignoreRecord: true)
-                    ->label('Carnet de Identidad')
-                    ->validationMessages([
-                        'unique' => 'Este carnet de identidad ya fue registrado. Registre uno nuevo.'
-                    ])
-                    ->maxLength(9)
-                    ->extraAttributes([
-                        'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
-                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
-                    ]),
+                        ->required() 
+                        ->validationMessages([
+                            'required' => 'Este campo es requerido',
+                        ])            
+                        ->hint('Ingrese un número de carnet de identidad boliviano válido.')
+                        ->alphaNum()
+                        ->unique(ignoreRecord: true)
+                        ->label('Carnet de Identidad')
+                        ->validationMessages([
+                            'unique' => 'Este carnet de identidad ya fue registrado. Registre uno nuevo.'
+                        ])
+                        ->maxLength(9)
+                        ->extraAttributes([
+                            'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
+                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
+                        ]),
                 
                     TextInput::make('client_cellphone_number')
-                    ->required()
-                    ->alphaNum()
-                    ->extraAttributes([
-                        'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
-                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
-                    ])
-                    ->prefix('+591')
-                    ->maxLength(8)
-                    ->unique(ignoreRecord: true)
-                    ->validationMessages([
-                        'unique' => 'Este número de teléfono ya fue registrado. Registre uno nuevo.' 
-                    ])
-                    ->label('Número Telefónico del Cliente')
-                    ->placeholder('XXX XX XXX')
-                    ->hint('Ingrese un número de teléfono boliviano válido.'),
+                        ->required()
+                        ->validationMessages([
+                            'required' => 'Este campo es requerido',
+                        ])  
+                        ->alphaNum()
+                        ->extraAttributes([
+                            'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
+                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
+                        ])
+                        ->prefix('+591')
+                        ->maxLength(8)
+                        ->unique(ignoreRecord: true)
+                        ->validationMessages([
+                            'unique' => 'Este número de teléfono ya fue registrado. Registre uno nuevo.' 
+                        ])
+                        ->label('Número Telefónico del Cliente')
+                        ->placeholder('XXX XX XXX')
+                        ->hint('Ingrese un número de teléfono boliviano válido.'),
 
                     TextInput::make('client_name')
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Este campo es requerido',
+                    ])  
                     ->maxLength(90)
                     ->extraAttributes([
                         'onkeydown' => "return event.keyCode === 8 || event.keyCode === 32 || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122);", // Allows backspace, space, and letters
@@ -77,6 +86,9 @@ class ClientResource extends Resource
                 
                     TextInput::make('client_last_name')
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Este campo es requerido',
+                    ])  
                     ->maxLength(90)
                     ->extraAttributes([
                         'onkeydown' => "return event.keyCode === 8 || event.keyCode === 32 || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122);", 
@@ -87,13 +99,16 @@ class ClientResource extends Resource
 
             
                 Section::make('Sección de Correo del Cliente')
-                ->description('Esta sección permite ingresar información relacionada a la cuenta del cliente, incluyendo datos como sucorreo electrónico y una contraseña. 
+                ->description('Esta sección permite ingresar información relacionada a la cuenta del cliente, incluyendo datos como su correo electrónico y una contraseña. 
                 Asi como el estado de la cuenta del cliente ')
                 ->icon('heroicon-o-envelope-open')
                 ->schema([
                     TextInput::make('client_email')
                         ->email()
                         ->required()
+                        ->validationMessages([
+                            'required' => 'Este campo es requerido',
+                        ])  
                         ->maxLength(100)
                         ->extraAttributes([
                             'onkeydown' => "return event.keyCode === 8 || event.keyCode === 46 || event.keyCode === 64 || event.keyCode === 189 || event.keyCode === 190 || event.keyCode === 95 || (event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 97 && event.keyCode <= 122);", // Allows backspace, delete, @, -, _, . and alphanumeric
@@ -116,7 +131,10 @@ class ClientResource extends Resource
                         ->validationMessages([
                             'minLength' => 'Por favor, ingrese una contraseña con al menos 9 caracteres.',
                         ])
-                        ->required(),
+                        ->required()
+                        ->validationMessages([
+                            'required' => 'Este campo es requerido',
+                        ]),
                     Toggle::make('is_active')
                         ->label('Estado de Cuenta')
                         ->onIcon('heroicon-m-bolt')

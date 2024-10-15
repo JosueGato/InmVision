@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('owners', function (Blueprint $table) {
             $table->increments('id')->unique('id_unique');
+            $table->string('ci', 9)->nullable();
             $table->string('owner_name', 90);
             $table->string('owner_last_name', 90);
-            $table->integer('owner_cellphone_number');
+            $table->string('owner_cellphone_number', 8);
             $table->string('owner_email', 100)->nullable();
             $table->tinyInteger('is_active')->nullable();
 

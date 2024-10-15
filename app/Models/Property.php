@@ -23,6 +23,9 @@ class Property extends Model
                            'property_image', 
                            'is_active'];
     
+    protected $casts = [
+        'property_image' => 'array', 
+    ];
     //PARA EL ESTADO DE LA PROPIEDAD                       
     public function propertystates()
     {

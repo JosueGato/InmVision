@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\AppointmentResource\Pages;
+namespace App\Filament\Resources\PropertyResource\Pages;
 
-use App\Filament\Resources\AppointmentResource;
+use App\Filament\Resources\PropertyResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditAppointment extends EditRecord
+class EditProperty extends EditRecord
 {
-    protected static string $resource = AppointmentResource::class;
+    protected static string $resource = PropertyResource::class;
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
-    }   
+    }
     protected function getHeaderActions(): array
     {
         return [
