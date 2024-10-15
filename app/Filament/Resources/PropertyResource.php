@@ -155,7 +155,7 @@ class PropertyResource extends Resource
                            
                          
                         ])->columnSpan(1)->columns(2),
-                    Wizard\Step::make('Especificaciones Extra')
+                    Wizard\Step::make('Especificaciones Adicionales')
                     ->icon('heroicon-m-cog')
                     
                         ->schema([

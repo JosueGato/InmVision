@@ -30,67 +30,78 @@ class AppointmentResource extends Resource
     protected static ?string $navigationGroup = 'Gestión de Citas';
 
     public static function form(Form $form): Form
-    {
-        return $form
+{
+    return $form
+        ->schema([
+            Section::make('Sección de Citas')
+            ->description('Esta sección permite gestionar las citas para visitas a propiedades, incluyendo información sobre la propiedad y el cliente')
+            ->icon('heroicon-o-calendar-date-range')
             ->schema([
-                Section::make('Sección de Citas')
-                ->description('Esta sección permite gestionar las citas para visitas a propiedades, incluyendo información sobre la propiedad y el cliente')
-                ->icon('heroicon-o-calendar-date-range')
-                ->schema([
-                    Select::make('client_id')
-                        ->label('Carnet de Identidad del Cliente')
-                        ->required()
-                        ->searchable()
-                        ->preload()
-                        ->extraAttributes([
-                            'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
-                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
-                        ])
-                        ->relationship('clients','ci'),
+                Select::make('client_id')
+                    ->label('Carnet de Identidad del Cliente')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->relationship('clients', 'ci'),
 
-                    Select::make('propertyprice_id')
-                        ->label('Codigo de la Propiedad')
-                        ->required()
-                        ->searchable()
-                        ->preload()
-                        ->relationship('propertyprices','propertyprice_code'),
-   
-                ])->columnSpan(1)->columns(1),
-            
-                            
-                Section::make('Sección de Fechas y Horarios')
-                ->description('Esta sección permite gestionar la disponibildad, incluyendo información sobre la fecha, hora.')
-                ->icon('heroicon-o-calendar')
-                ->schema([
-                    Select::make('schedule_id')
-                        ->label('Seleccione un Horario')
-                        ->required()
-                        ->preload()
-                        
-                        ->relationship('schedules','schedule_name'),
+                Select::make('propertyprice_id')
+                    ->label('Código de la Propiedad')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->relationship('propertyprices', 'propertyprice_code'),
+            ])->columnSpan(1)->columns(1),
 
-                Forms\Components\DatePicker::make('appointment_date')
+            Section::make('Sección de Fechas y Horarios')
+            ->description('Esta sección permite gestionar la disponibilidad, incluyendo información sobre la fecha y hora.')
+            ->icon('heroicon-o-calendar')
+            ->schema([
+                Select::make('schedule_id')
+                    ->label('Seleccione un Horario')
+                    ->required()
+                    ->preload()
+                    ->relationship('schedules', 'schedule_name'),
+
+                DatePicker::make('appointment_date')
                     ->required()
                     ->after('tomorrow')
                     ->label('Seleccione una Fecha con un Día de Anticipación')
                     ->validationMessages([
-                        'after' => 'La cita debe ser agendada con un día de anticipación!' 
+                        'after' => 'La cita debe ser agendada con un día de anticipación!'
+                    ])
+                    ->rules([
+                        function (\Filament\Forms\Get $get) {
+                            return function (string $attribute, $value, $fail) use ($get) {
+                                $scheduleId = $get('schedule_id');
+
+                                if (!$scheduleId) {
+                                    $fail('Por favor seleccione un horario.');
+                                    return;
+                                }
+
+                                // Verificar si ya existe una cita con la misma fecha y horario
+                                $exists = Appointment::where('appointment_date', $value)
+                                    ->where('schedule_id', $scheduleId)
+                                    ->exists();
+
+                                if ($exists) {
+                                    $fail("Ya existe una cita programada en esta fecha y horario.");
+                                }
+                            };
+                        },
                     ]),
+            ])->columnSpan(1)->columns(1),
 
-                ])->columnSpan(1)->columns(1),
-               
-
-                Section::make('Sección de Campo Opcional')
-                ->description('Esta sección permite gestionar algun comentario o nota extra para cada cita.')
-                ->icon('heroicon-o-circle-stack')
-                ->schema([
-                    MarkdownEditor::make('comment')
+            Section::make('Sección de Campo Opcional')
+            ->description('Esta sección permite gestionar algún comentario o nota extra para cada cita.')
+            ->icon('heroicon-o-circle-stack')
+            ->schema([
+                MarkdownEditor::make('comment')
                     ->label('Comentarios para la Cita'),
+            ])->columns(1),
+        ])->columns(2);
+}
 
-                ])->columns(1),
-                
-            ])->columns(2);
-    }
 
     public static function table(Table $table): Table
     {
@@ -154,7 +165,28 @@ class AppointmentResource extends Resource
                     Forms\Components\DatePicker::make('new_date')
                         ->label('Nueva Fecha')
                         ->required()
-                        ->after('tomorrow'),    
+                        ->after('tomorrow')
+                        ->rules([
+                            function (\Filament\Forms\Get $get) {
+                                return function (string $attribute, $value, $fail) use ($get) {
+                                    $scheduleId = $get('schedule_id');
+    
+                                    if (!$scheduleId) {
+                                        $fail('Por favor seleccione un horario.');
+                                        return;
+                                    }
+    
+                                    // Verificar si ya existe una cita con la misma fecha y horario
+                                    $exists = Appointment::where('appointment_date', $value)
+                                        ->where('schedule_id', $scheduleId)
+                                        ->exists();
+    
+                                    if ($exists) {
+                                        $fail("Ya existe una cita programada en esta fecha y horario.");
+                                    }
+                                };
+                            },
+                        ]),    
                     Select::make('schedule_id')
                         ->label('Nuevo Horario')
                         ->relationship('schedules', 'schedule_name')
@@ -162,6 +194,9 @@ class AppointmentResource extends Resource
                     MarkdownEditor::make('reason')
                         ->label('Razón de la Reprogramación')
                         ->required()
+                        ->validationMessages([
+                            'required' => 'Este campo es requerido',
+                        ])  
                         ->maxLength(255),
                 ])
                 ->action(function (array $data, Appointment $record): void {
