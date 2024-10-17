@@ -64,7 +64,28 @@ class PropertypriceResource extends Resource
                         ->required()
                         ->label('Estado de la Propiedad para su Asignación')
                         ->relationship('propertylistings', 'property_listing_name')                              
-                        ->preload(),
+                        ->preload()
+                        ->rules([
+                            function (\Filament\Forms\Get $get) {
+                                return function (string $attribute, $value, $fail) use ($get) {
+                                    $scheduleId = $get('property_id');
+    
+                                    if (!$scheduleId) {
+                                        $fail('Por favor seleccione una propiedad.');
+                                        return;
+                                    }
+    
+                                    // Verificar si ya existe una cita con la misma fecha y horario
+                                    $exists = Propertyprice::where('propertylisting_id', $value)
+                                        ->where('property_id', $scheduleId)
+                                        ->exists();
+    
+                                    if ($exists) {
+                                        $fail("Ya existe una asignacion de este estado para esta propiedad.");
+                                    }
+                                };
+                            },
+                        ]),
                 ])->columnSpan(1)->columns(1),
 
                 Section::make('Sección de Precios')
