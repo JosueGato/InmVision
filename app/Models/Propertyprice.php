@@ -27,6 +27,12 @@ class Propertyprice extends Model
         return $this->belongsTo(Propertylisting::class, 'propertylisting_id');
     }
 
+    //PARA EL AGENTE
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     //PARA LA PROPIEDAD
     public function properties()
     {

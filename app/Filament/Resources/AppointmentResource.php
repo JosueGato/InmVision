@@ -64,6 +64,7 @@ class AppointmentResource extends Resource
 
                 DatePicker::make('appointment_date')
                     ->required()
+                    //->disabledDays([0])
                     ->after('tomorrow')
                     ->label('Seleccione una Fecha con un Día de Anticipación')
                     ->validationMessages([
@@ -166,6 +167,9 @@ class AppointmentResource extends Resource
                         ->label('Nueva Fecha')
                         ->required()
                         ->after('tomorrow')
+                        ->validationMessages([
+                            'after' => 'La cita debe ser agendada con un día de anticipación!'
+                        ])
                         ->rules([
                             function (\Filament\Forms\Get $get) {
                                 return function (string $attribute, $value, $fail) use ($get) {

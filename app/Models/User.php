@@ -42,4 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    //PARA LA CITA
+    public function propertyprices()
+    {
+        return $this->hasMany(Propertyprice::class, 'id');
+    }
 }

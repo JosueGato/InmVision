@@ -5,6 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PropertyResource\Pages;
 use App\Filament\Resources\PropertyResource\RelationManagers;
 use App\Models\Property;
+use App\Models\User;
+use App\Models\Propertylisting;
+use App\Models\Propertyprice;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -248,7 +251,60 @@ class PropertyResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                /*
+                Tables\Actions\Action::make('assignPrice')
+                ->label('Asignar Precio')
+                ->icon('heroicon-o-currency-dollar')
+                ->form([
+                    // Campo para seleccionar el usuario
+                    Select::make('user_id')
+                        ->label('Seleccionar Usuario')
+                        //->options(User::whereNotNull('name')->pluck('name', 'id')) // Asegúrate de que el campo `name` no sea null
+                        ->searchable()
+                        ->relationship('users','email')
+                        ->required(),
+
+                    // Campo para seleccionar la lista de propiedades
+                    Select::make('propertylisting_id')
+                        ->label('Seleccionar Listado de Propiedad')
+                        ->relationship('propertylisting', 'listing_name')  // Relación con `Propertylisting`
+                        //->options(Propertylisting::all()->pluck('listing_name', 'id')) // Mostrar propiedades disponibles
+                        ->searchable()  // Permite buscar propiedades
+                        ->required(),
+
+                    // Campo para los precios en bolivianos
+                    TextInput::make('price_bs')
+                        ->label('Precio en Bs')
+                        ->numeric()
+                        ->required(),
+
+                    // Campo para los precios en dólares
+                    TextInput::make('price_us')
+                        ->label('Precio en USD')
+                        ->numeric()
+                        ->required(),
+                ])
+                ->action(function (array $data, Property $record) {
+                    PropertyPrice::create([
+                        'property_id' => $record->id,  // La propiedad actual
+                        'user_id' => $data['user_id'],  // Usuario seleccionado
+                        'price_bs' => $data['price_bs'],
+                        'price_us' => $data['price_us'],
+                        'registration_date' => now(),
+                        'propertylisting_id' => $data['propertylisting_id'],  // Listado de propiedad seleccionado
+                        'is_active' => true,
+                    ]);
+
+                    // Opcional: Desactivar precios antiguos si solo quieres un precio activo por propiedad
+                    PropertyPrice::where('property_id', $record->id)
+                        ->where('id', '!=', $record->id)
+                        ->update(['is_active' => false]);
+                })
+                ->modalHeading('Asignar Precio a la Propiedad')
+                ->modalButton('Asignar'),*/
             ])
+
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
