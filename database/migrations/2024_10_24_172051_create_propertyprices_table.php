@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('propertyprices', function (Blueprint $table) {
-            $table->increments('id')->unique('id_unique');
-            $table->unsignedBigInteger('user_id')->index('fk_property_prices_users1_idx');
+            $table->unsignedInteger('id')->unique('id_unique');
             $table->string('propertyprice_code', 40)->nullable();
             $table->decimal('price_bs', 10)->nullable();
             $table->decimal('price_us', 10)->nullable();
@@ -21,6 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('property_id')->index('fk_propertyprices_properties1_idx');
             $table->unsignedInteger('propertylisting_id')->index('fk_propertyprices_propertylistings1_idx');
             $table->tinyInteger('is_active')->nullable();
+            $table->unsignedBigInteger('user_id')->index('fk_propertyprices_users1_idx')->nullable();
 
             $table->primary(['id']);
         });

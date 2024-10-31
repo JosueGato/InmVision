@@ -9,6 +9,8 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -40,6 +42,13 @@ class AppointmentResource extends Resource
                 Select::make('client_id')
                     ->label('Carnet de Identidad del Cliente')
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Este campo es requerido',
+                    ])  
+                    ->extraAttributes([
+                        'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
+                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
+                    ])
                     ->searchable()
                     ->preload()
                     ->relationship('clients', 'ci'),
@@ -47,6 +56,9 @@ class AppointmentResource extends Resource
                 Select::make('propertyprice_id')
                     ->label('Código de la Propiedad')
                     ->required()
+                    ->validationMessages([
+                        'required' => 'Este campo es requerido',
+                    ])  
                     ->searchable()
                     ->preload()
                     ->relationship('propertyprices', 'propertyprice_code'),
@@ -107,7 +119,8 @@ class AppointmentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+          
+            ->columns([   
                 Tables\Columns\TextColumn::make('clients.ci')
                     ->label('Carnet de Identidad del Cliente')
                     ->icon('heroicon-o-identification')
@@ -149,8 +162,6 @@ class AppointmentResource extends Resource
                     ->icon('heroicon-o-numbered-list')
                     ->label('Numero de Reprogramaciones')
                     ->sortable(),
-               
-          
             ])
 
             ->filters([

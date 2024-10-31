@@ -8,6 +8,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -76,6 +77,13 @@ class DashPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugin(
+                FilamentFullCalendarPlugin::make()
+                    
+            )
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
             ]);
     }
 }

@@ -9,4 +9,8 @@ use Filament\Resources\Pages\CreateRecord;
 class CreatePropertyprice extends CreateRecord
 {
     protected static string $resource = PropertypriceResource::class;
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

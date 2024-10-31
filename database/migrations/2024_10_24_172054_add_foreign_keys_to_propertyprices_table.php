@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('propertyprices', function (Blueprint $table) {
-            $table->foreign(['user_id'], 'fk_property_prices_users1')->references(['id'])->on('users')->onUpdate('no action')->onDelete('no action');
             $table->foreign(['property_id'], 'fk_propertyprices_properties1')->references(['id'])->on('properties')->onUpdate('no action')->onDelete('no action');
             $table->foreign(['propertylisting_id'], 'fk_propertyprices_propertylistings1')->references(['id'])->on('propertylistings')->onUpdate('no action')->onDelete('no action');
+            $table->foreign(['user_id'], 'fk_propertyprices_users1')->references(['id'])->on('users')->onUpdate('no action')->onDelete('no action');
         });
     }
 
@@ -24,9 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('propertyprices', function (Blueprint $table) {
-            $table->dropForeign('fk_property_prices_users1');
             $table->dropForeign('fk_propertyprices_properties1');
             $table->dropForeign('fk_propertyprices_propertylistings1');
+            $table->dropForeign('fk_propertyprices_users1');
         });
     }
 };

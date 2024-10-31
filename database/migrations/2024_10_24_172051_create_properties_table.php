@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('direction', 90);
             $table->decimal('total_land_area', 10);
             $table->integer('bedroom_number');
-            $table->string('bathroom_numbers', 2);
-            $table->string('construction_year', 4);
+            $table->integer('bathroom_numbers');
+            $table->integer('construction_year');
             $table->string('description', 230)->nullable();
             $table->string('constructed_area', 6)->nullable();
             $table->text('property_image')->nullable();

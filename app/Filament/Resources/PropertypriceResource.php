@@ -39,7 +39,7 @@ class PropertypriceResource extends Resource
                     Hidden::make('user_id')
                         ->default(auth()->id()) // Establece el usuario autenticado
                         ->required(),
-                   /* TextInput::make('user_id')
+                   /*TextInput::make('user_id')
                             ->label('Agente Inmobiliario')
                             ->required()
                             ->default(auth()->user()->email) // Set the default value to the authenticated user's email
@@ -75,7 +75,6 @@ class PropertypriceResource extends Resource
                                         return;
                                     }
     
-                                    // Verificar si ya existe una cita con la misma fecha y horario
                                     $exists = Propertyprice::where('propertylisting_id', $value)
                                         ->where('property_id', $scheduleId)
                                         ->exists();

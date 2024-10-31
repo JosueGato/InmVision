@@ -9,7 +9,10 @@ use Filament\Resources\Pages\EditRecord;
 class EditPropertyprice extends EditRecord
 {
     protected static string $resource = PropertypriceResource::class;
-
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
     protected function getHeaderActions(): array
     {
         return [
