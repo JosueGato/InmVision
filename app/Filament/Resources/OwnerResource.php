@@ -42,7 +42,7 @@ class OwnerResource extends Resource
                         ->validationMessages([
                             'unique' => 'Este carnet de identidad ya fue registrado. Registre uno nuevo.'
                         ])
-                        ->maxLength(9)
+                        ->maxLength(8)
                         ->extraAttributes([
                             'onkeydown' => "return event.keyCode === 8 || (event.keyCode >= 48 && event.keyCode <= 57)", 
                             'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');", 
@@ -86,7 +86,7 @@ class OwnerResource extends Resource
                         ->validationMessages([
                             'unique' => 'Este número de teléfono ya fue registrado. Registre uno nuevo.' 
                         ])
-                        ->label('Número Telefónico del Cliente')
+                        ->label('Número Telefónico del Propietario')
                         ->placeholder('XXX XX XXX')
                         ->hint('Ingrese un número de teléfono boliviano válido.'),
 
@@ -103,7 +103,7 @@ class OwnerResource extends Resource
                             'unique' => 'El correo electrónico ingresado ya está en uso. Por favor, ingrese uno diferente.' 
                         ])
                         ->placeholder('ejemplo@correo.com')
-                        ->label('Correo Electrónico del Cliente'),
+                        ->label('Correo Electrónico del Propietario'),
 
                     Toggle::make('is_active')
                         ->label('Estado de Cuenta')

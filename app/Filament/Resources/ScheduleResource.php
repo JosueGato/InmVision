@@ -16,6 +16,8 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ScheduleResource extends Resource
@@ -30,25 +32,45 @@ class ScheduleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Section::make('Sección de Horarios')
-            ->description('Esta sección permite gestionar los horarios disponibles, incluyendo una descripcion y su disponibilidad, así como su estado.')
-            ->icon('heroicon-o-clock')
             ->schema([
-                TimePicker::make('hour')              
-                    ->label('Asignación de Horario')
-                    ->required(),
+                Section::make('Sección de Horarios')
+                    ->description('Esta sección permite gestionar los horarios disponibles, incluyendo una descripción y su disponibilidad, así como su estado.')
+                    ->icon('heroicon-o-clock')
+                    ->schema([
 
-                MarkdownEditor::make('description')
-                    ->label('Descripción del Horario'),
-                 
-                Toggle::make('is_active')
-                    ->label('Estado de Horario')
-                    ->onIcon('heroicon-m-clock')
-                    ->offIcon('heroicon-m-bolt'),
-            ])
-        ])->columns(1);
-            
+                        TimePicker::make('hour')
+                            ->label('Asignación de Horario')
+                            ->hint('Ingrese un horario entre las 8:00 a.m. y las 22:00 p.m.')
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'Ingrese un horario dentro de los rangos establecidos' 
+                            ])
+                            //->native(false) // Desactiva el selector nativo
+                            ->hoursStep(1)
+                            ->minutesStep(15)
+                            // ->disabled(fn ($get) => self::shouldDisableTime($get)) // Comentar esta línea temporalmente
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                $selectedTime = Carbon::parse($state);
+                                $startLimit = Carbon::createFromTime(22, 0);
+                                $endLimit = Carbon::createFromTime(8, 0);
+                                if ($selectedTime->between($startLimit, Carbon::createFromTime(23, 59, 59)) ||
+                                    $selectedTime->between(Carbon::createFromTime(0, 0), $endLimit)) {
+                                    $set('hour', null); // Restablecer el valor
+                                    throw ValidationException::withMessages([
+                                        'hour' => 'El horario no puede estar entre las 22:00 y las 08:00.',
+                                    ]);
+                                }
+                            }),
+    
+                        MarkdownEditor::make('description')
+                            ->label('Descripción del Horario'),
+    
+                        Toggle::make('is_active')
+                            ->label('Estado de Horario')
+                            ->onIcon('heroicon-m-clock')
+                            ->offIcon('heroicon-m-bolt'),
+                    ])
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -83,6 +105,11 @@ class ScheduleResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function shouldDisableTime($get) {
+        $hour = (int) Carbon::parse($get('hour'))->format('H');
+        return ($hour >= 22 || $hour < 8);
     }
 
     public static function getRelations(): array
